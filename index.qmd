@@ -1,15 +1,11 @@
 ---
 title: "Course Projects"
 format: html
-
 ---
-
 
 <div style="text-align: center;">
 
 ## Viktoria Axelsson
-
-
 
 ### About Me
 
@@ -21,12 +17,24 @@ Connect with me on LinkedIn: [Here](https://www.linkedin.com/in/viktoria-axelsso
 
 </div>
 
-```{r}
-#| include: false
-1+1
-```
---------------
-Last Updated: `r format(Sys.time(), "%A %m %d, %Y at %H:%M%p")`
+---
 
+## Mini Projects
+
+### Mini Project 1  
+[View Project](mp01.html)
+
+### Mini Project 2  
+[View Project](mp02.html)
+
+### Mini Project 3  
+[View Project](mp03.html)
+
+### Mini Project 4  
+[View Project](mp04.html)
+
+---
+
+Last Updated: `r format(Sys.time(), "%A %m %d, %Y at %H:%M%p")`
 
 
