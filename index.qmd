@@ -7,9 +7,7 @@ format: html
 
 ## Viktoria Axelsson
 
-### About Me
-
-I'm 25, from Sweden, and currently getting my Master's degree in Business Analytics at *Baruch College*. I also have a part time operations role in the travel and lifestyle industry. 
+Business Analytics graduate student with hands-on experience in Salesforce automation, data analysis, and operational optimization. Skilled in SQL and Python, with a strong focus on improving workflows, increasing efficiency, and supporting data-driven business decisions.
 
 Connect with me on LinkedIn: [Here](https://www.linkedin.com/in/viktoria-axelsson-868662223)
 
