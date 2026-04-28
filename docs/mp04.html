@@ -153,16 +153,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#extra-credit" id="toc-extra-credit" class="nav-link" data-scroll-target="#extra-credit">Extra Credit</a></li>
   <li><a href="#data-acquisition" id="toc-data-acquisition" class="nav-link" data-scroll-target="#data-acquisition">1. Data Acquisition</a></li>
   <li><a href="#data-integration-exploration" id="toc-data-integration-exploration" class="nav-link" data-scroll-target="#data-integration-exploration">2. Data Integration &amp; Exploration</a></li>
   <li><a href="#statistical-analysis" id="toc-statistical-analysis" class="nav-link" data-scroll-target="#statistical-analysis">3. Statistical Analysis</a></li>
-  <li><a href="#fact-check-bls-revisions" id="toc-fact-check-bls-revisions" class="nav-link" data-scroll-target="#fact-check-bls-revisions">4. Fact Check BLS Revisions</a>
+  <li><a href="#data-reliability-analysis" id="toc-fact-check-bls-revisions" class="nav-link" data-scroll-target="#fact-check-bls-revisions">4. Fact Check BLS Revisions</a>
   <ul class="collapse">
-  <li><a href="#fact-check-1-the-average-ces-revision-has-increased-since-2020." id="toc-fact-check-1-the-average-ces-revision-has-increased-since-2020." class="nav-link" data-scroll-target="#fact-check-1-the-average-ces-revision-has-increased-since-2020.">Fact-Check 1: “The average CES revision has increased since 2020.”</a></li>
+  <li><a href="#revision-trend-over-time"" id="toc-fact-check-1-the-average-ces-revision-has-increased-since-2020." class="nav-link" data-scroll-target="#fact-check-1-the-average-ces-revision-has-increased-since-2020.">Fact-Check 1: “The average CES revision has increased since 2020.”</a></li>
   <li><a href="#fact-check-2-bls-job-reports-systematically-favor-democrats-and-punish-republicans" id="toc-fact-check-2-bls-job-reports-systematically-favor-democrats-and-punish-republicans" class="nav-link" data-scroll-target="#fact-check-2-bls-job-reports-systematically-favor-democrats-and-punish-republicans">Fact Check 2: “BLS job reports systematically favor Democrats and punish Republicans”</a></li>
-  <li><a href="#extra-credit-1" id="toc-extra-credit-1" class="nav-link" data-scroll-target="#extra-credit-1">Extra Credit:</a></li>
-  <li><a href="#extra-credit-2" id="toc-extra-credit-2" class="nav-link" data-scroll-target="#extra-credit-2">Extra Credit</a></li>
+ 
   </ul></li>
   </ul>
 </nav>
@@ -216,7 +214,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>The CES program at the BLS provides monthly employment estimates, which are later revised as more data become available. This project examines CES revision patterns from 1979 to mid-2025, focusing on absolute and relative revisions. I will fact-check claims that revisions systematically favor Democratic over Republican presidents with statistical tests and data from BLS reports.</p>
 </section>
-<section id="extra-credit" class="level2">
 <h2 class="anchored">Analytical Approach</h2>
 <p>Used resampling and statistical inference techniques to evaluate whether observed patterns in employment data revisions were statistically significant. This approach provides a more robust evaluation of real-world data behavior.</p>
 <p>Computationally intensive statistical inference</p>
@@ -1504,14 +1501,15 @@ mean in group post_2020  mean in group pre_2020
 </div>
 </section>
 <section id="fact-check-bls-revisions" class="level2">
-<h2 class="anchored" data-anchor-id="fact-check-bls-revisions">4. Fact Check BLS Revisions</h2>
+<h2 class="anchored" data-anchor-id="data-reliability-analysis">Data Reliability Analysis</h2>
 <p>In this section I will evaluate claims made by politicians regarding CES revisions and the firing of Dr.&nbsp;McEntarfer, using data-driven evidence.</p>
 <section id="fact-check-1-the-average-ces-revision-has-increased-since-2020." class="level3">
-<h3 class="anchored" data-anchor-id="fact-check-1-the-average-ces-revision-has-increased-since-2020.">Fact-Check 1: “The average CES revision has increased since 2020.”</h3>
-<p><strong>Source:</strong> Politician claim (fake)</p>
-<p>Here I will be fact checking on the claim that the average CES revision increased post-2020.</p>
-<p><strong>Null hypothesis (H0):</strong> The mean revision pre-2020 = mean revision post-2020</p>
-<p><strong>Alternative hypothesis (H1):</strong> The mean revision post-2020 &gt; mean revision pre-2020</p>
+<h3 class="anchored" data-anchor-id="revision-trend-over-time">
+Trend in Revision Magnitude Over Time
+</h3>
+<p>This section analyzes how the magnitude of employment data revisions has changed over time, with a focus on recent years.</p>
+<p><strong>Null Hypothesis (H0):</strong> There is no difference in the average revision magnitude between pre-2020 and post-2020 periods.</p>
+<p><strong>Alternative Hypothesis (H1):</strong> The average revision magnitude is higher in the post-2020 period.</p>
 <section id="welch-two-sample-t-test-comparing-ces-revisions-pre--vs-post-2020" class="level4">
 <h4 class="anchored" data-anchor-id="welch-two-sample-t-test-comparing-ces-revisions-pre--vs-post-2020"><strong>Welch Two-Sample t-test: Comparing CES Revisions Pre- vs Post-2020</strong></h4>
 <div class="cell">
@@ -1609,8 +1607,13 @@ mean in group post_2020  mean in group pre_2020
 </ul>
 </section>
 </section>
-<section id="fact-check-2-bls-job-reports-systematically-favor-democrats-and-punish-republicans" class="level3">
-<h3 class="anchored" data-anchor-id="fact-check-2-bls-job-reports-systematically-favor-democrats-and-punish-republicans">Fact Check 2: “BLS job reports systematically favor Democrats and punish Republicans”</h3>
+<section id="revision-patterns-across-time" class="level3">
+<h3 class="anchored" data-anchor-id="revision-patterns-across-time">
+Revision Patterns Across Time Periods
+</h3>
+  <p><p>This section evaluates whether employment data revisions differ across time periods and whether observed variation is statistically significant or driven by broader economic conditions.</p>
+  <p><strong>Null Hypothesis (H0):</strong> There is no significant difference in revision patterns across time periods.</p>
+<p><strong>Alternative Hypothesis (H1):</strong> Revision patterns differ across time periods.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -1643,7 +1646,6 @@ mean in group post_2020  mean in group pre_2020
 <p><strong>H0:</strong> The mean CES revision under Republican presidents is greater than or equal to the mean CES revision under Democratic presidents.</p>
 <p><strong>H1:</strong> The mean CES revision under Republican presidents is lower than the mean under Democratic presidents.</p>
 </section>
-<section id="extra-credit-1" class="level3">
 <p>Schematic / Flowchart – step-by-step logic of how the computational test work</p>
 <div class="cell">
 <details class="code-fold">
@@ -1739,8 +1741,6 @@ mean in group post_2020  mean in group pre_2020
 <p><strong>Interpretation:</strong></p>
 <p>While absolute revisions differ, relative revisions (as % of employment) are not significantly different by president party. There’s no evidence that BLS systematically favors one party.</p>
 </section>
-<section id="extra-credit-2" class="level3">
-<h3 class="anchored" data-anchor-id="extra-credit-2">Extra Credit</h3>
 <p>Applying computationally intensive techniques in your fact check - Compute Bootstrap resampling</p>
 <div class="cell">
 <details class="code-fold">
