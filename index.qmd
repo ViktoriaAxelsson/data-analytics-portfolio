@@ -26,10 +26,12 @@ Connect with me on LinkedIn: [Here](https://www.linkedin.com/in/viktoria-axelsso
 [View Project](mp02.html)
 
 ### Mini Project 3  
-[View Project](mp03.html)
+[Mini Project 3: NYC Tree Analysis](mp03.html)
 
 ### Mini Project 4  
 [View Project](mp04.html)
+
+
 
 ---
 
