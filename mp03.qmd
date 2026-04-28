@@ -47,6 +47,10 @@ library(leaflet)
 library(htmltools)
 
 
+library(htmltools)
+
+dir.create("data/mp03", recursive = TRUE, showWarnings = FALSE)
+
 get_council_districts <- function() {
   # api_url for NYC Council Districts
   api_url <- "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/NYC_City_Council_Districts/FeatureServer/0/query"
