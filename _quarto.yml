@@ -1,12 +1,14 @@
 project:
   type: website
   output-dir: docs
+  render:
+    - mp03.qmd
 
 website:
   title: "STA 9750 Submission Material"
   description:
     Course Projects for STA 9750 at Baruch College
-  site-url: "https://viktoriaaxelsson.github.io/STA9750-2025-FALL/"
+  site-url: "https://viktoriaaxelsson.github.io/data-analytics-portfolio/"
   navbar:
     background: primary
     search: false
