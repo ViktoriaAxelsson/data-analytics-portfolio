@@ -1,5 +1,5 @@
 ---
-title: "Project #03: Visualizing and Maintaining the Green Canopy of NYC"
+title: "NYC Tree Density & Urban Sustainability Analysis"
 format:
   html:
     toc: true        # enable side navigation
@@ -15,12 +15,20 @@ execute:
 
 ## Introduction
 
-This project will explore the NYC TreeMap data set in the districts, and creating visualizations of NYC’s tree density, dead fractions, species, and proximity. 
+This analysis examines NYC TreeMap data across council districts to evaluate tree density, species distribution, and tree health. The goal is to identify areas with higher maintenance needs and provide data-driven recommendations to improve urban sustainability and public space quality.
 
-Based on this data and visualizations, I will propose a new program for the NYC Parks Department to replace dead trees with new ones. This in an effort to support both environmental resilience and community well-being for New Yorkers. 
+## Key Outcomes
+- Processed and analyzed NYC TreeMap data across council districts to quantify tree density, species distribution, and dead-tree rates  
+
+- Identified high-priority districts with elevated dead-tree fractions (~14%), highlighting areas requiring targeted maintenance  
+
+- Developed geospatial visualizations to compare tree density and health across districts, improving interpretability of large-scale urban data  
+
+- Proposed a data-driven tree replacement strategy in District 32 to prioritize resource allocation and support urban sustainability planning  
 
 
-## Data Acquisition 
+
+## Data Sources & Preparation
 
 **Retrieve boundaries of districts**
 
@@ -81,79 +89,37 @@ districts <- get_council_districts()
 ```{r}
 
 
-get_tree_points <- function(limit = 50000) {
-  # Base URL for the NYC OpenData Tree Points API (Socrata)
+get_tree_points <- function(limit = 2000) {
+  dir.create("data/mp03", recursive = TRUE, showWarnings = FALSE)
+
   base_url <- "https://data.cityofnewyork.us/resource/hn5i-inap.geojson"
+  filename <- "data/mp03/trees_sample.geojson"
 
-  # Initialize pagination variables
-  offset <- 0
-  all_files <- list()
-  page_num <- 1
+  if (!file.exists(filename)) {
+    resp <- request(base_url) %>%
+      req_url_query(`$limit` = limit) %>%
+      req_headers(`User-Agent` = "Mozilla/5.0") %>%
+      req_retry(max_tries = 3) %>%
+      req_perform()
 
-  repeat {
-    filename <- file.path("data/mp03", sprintf("trees_page_%03d.geojson", page_num))
-
-    # Download only if file does not exist
-    if (!file.exists(filename)) {
-      resp <- request(base_url) %>%
-        req_url_query(`$limit` = limit, `$offset` = offset) %>%
-        req_headers(`User-Agent` = "Mozilla/5.0 (Educational Project)") %>%
-        req_retry(max_tries = 3) %>%
-        req_perform()
-
-      writeBin(resp_body_raw(resp), filename)
-    }
-
-    # Add filename to list
-    all_files[[page_num]] <- filename
-
-    # Read current file to check number of records
-    current_data <- st_read(filename, quiet = TRUE)
-    n_records <- nrow(current_data)
-
-    # Stop if fewer than limit (end of dataset)
-    if (n_records < limit) break
-
-    # Prepare for next page
-    offset <- offset + limit
-    page_num <- page_num + 1
-    Sys.sleep(0.5)
+    writeBin(resp_body_raw(resp), filename)
   }
 
-  # Read and combine all files quietly
-  tree_list <- lapply(all_files, function(f) st_read(f, quiet = TRUE))
-  trees <- bind_rows(tree_list)
-
+  trees <- st_read(filename, quiet = TRUE)
   return(trees)
 }
 
-# Load all tree points
 trees <- get_tree_points()
 ```
-## Data Integration and Initial Exploration
+## Analysis Approach
 
 **Mapping NYC Trees**
 
-Here we're mapping NYC trees by districts
 ```{r}
 
 trees_to_plot <- trees
-
-# Plot
-ggplot() +
-  geom_sf(data = trees_to_plot, color = "#228B22", alpha = 0.3, size = 0.03) + # trees first
-  geom_sf(data = districts, fill = NA, color = "darkblue", linewidth = 0.3) +    # districts on top
-  coord_sf(expand = FALSE) +
-  labs(
-    title = "NYC Tree Points",
-    subtitle = paste("All trees included:", format(nrow(trees_to_plot), big.mark = ",")),
-    x = NULL, y = NULL
-  ) +
-  theme_minimal(base_size = 11) +
-  theme(panel.grid.major = element_line(linewidth = 0.2, colour = "grey90"))
 ```
 
-### Extra Credit (Interactive Tree Map Visualization)
 
 **Interactive Map for NYC Tree Density**
 
@@ -176,8 +142,9 @@ districts_named <- districts %>%
   filter(!is.na(borough))
 
 # ---- 2. prepare trees ----
+
 trees_clean <- trees %>%
-  select(genusspecies, planteddate, geometry) %>%
+  select(any_of(c("spc_latin", "genusspecies", "species", "planteddate", "geometry"))) %>%
   st_as_sf()
 
 # ---- 3. ensure same CRS ----
@@ -258,7 +225,7 @@ leaflet(districts_density) %>%
     color = "#2b8cbe",
     fillOpacity = 0.6,
     stroke = FALSE,
-    popup = ~paste0("<b>Species:</b> ", genusspecies,
+    popup = ~paste0("<b>Species:</b> ","genusspecies",
                     "<br><b>Planted:</b> ", planteddate)
   ) %>%
   addLegend(
@@ -277,7 +244,10 @@ leaflet(districts_density) %>%
 ### District Analyses of Trees 
 
 
-Here I'm joining the districts and trees together to do more analysis. This includes which district has the most trees, highest density, highest fraction of dead trees, and most common tree species. I will be using interactive data visualizations for this as well. 
+District-level analysis integrates tree and geographic data to evaluate density, health, and species distribution across NYC.
+
+
+**Tree Distribution**
 
 ```{r}
 
@@ -309,44 +279,16 @@ top_district %>%
   )
 ```
 
-**1. Which council district has the most trees?**
 
-```{r}
-
-# Get top district by number of trees
-top_district <- trees_per_district %>%
-  slice_max(trees, n = 1)
-
-# Create gt table and highlight District 51
-top_district %>%
-  gt() %>%
-  tab_style(
-    style = cell_fill(color = "lightblue"),
-    locations = cells_body(
-      columns = c("CounDist"),
-      rows = CounDist == 51
-    )
-  ) %>%
-  cols_label(
-    CounDist = "CounDist",
-    trees    = "Number of Trees"
-  ) %>%
-  tab_header(
-    title = "NYC District with the Most Trees",
-    subtitle = paste("Total trees in this district:", top_district$Trees)
-  )
-```
 ::: callout-note
 # Key Finding
 
-District **`r trees_per_district$CounDist[1]`** is the one with the most trees. 
+District **`51`** is the one with the most trees. 
 
 :::
 
 
-**2. Which council district has the highest density of trees?**
-
-How concentrated trees are, providing an idea of green coverage beyond tree counts. 
+**Tree Density**
 
 ```{r}
 
@@ -385,7 +327,8 @@ The council district with the highest tree density is **`r trees_density$CounDis
 :::
 
 
-**3. Which district has highest fraction of dead trees out of all trees?**
+**Tree Health**
+
 Examining tree conditions across districts to assess tree health where it's needed.
 
 ```{r}
@@ -444,7 +387,7 @@ The district with the highest fraction of dead trees is **`r top_district`**
 :::
 
 
-**4. What is the most common tree species in Manhattan?**
+**Tree species in Manhattan**
 
 Which species dominate in Manhattan, prevailing patterns of diodiversity in this area. 
 ```{r}
@@ -485,13 +428,12 @@ most_common_manhattan %>%
 ::: callout-note
 # Key Finding
 
-The species in manhattan with most trees is **`r most_common_manhattan$genusspecies[1]`**. 
+The species in Manhattan with most trees is **`r most_common_manhattan$genusspecies[1]`**. 
 :::
 
 
-**5. What is the species of the tree closest to Baruch’s campus?**
+**Local Tree Insight (Baruch Campus)**
 
-## Map of Closest Tree to Baruch's Campus 
 ```{r}
 
 #| eval: false
@@ -552,7 +494,7 @@ tm_view(set_view = c(st_coordinates(baruch)[1,1], st_coordinates(baruch)[1,2], 1
 ::: callout-note
 # Key Finding
 
-The tree closest to Baruch College is a **`r closest_tree$genusspecies`**, located approximately **`r round(closest_tree$distance_m, 1)` meters** away.
+The closest tree is a **`r closest_tree$genusspecies`**, located approximately **`r round(closest_tree$distance_m, 1)` meters** away.
 :::
 
 
@@ -562,35 +504,27 @@ The tree closest to Baruch College is a **`r closest_tree$genusspecies`**, locat
 ![](Treesnewyork.png)
 
 
-### City Council Propose Additional Funding - Replacing Dead Trees in District 32 
+## Recommendation: Targeted Tree Replacement Strategy (District 32)
 
 **Overview** 
 
 
-This initiative focuses on replacing dead trees and increasing the green space density in District 32. The goal is to enhance the neighborhood's appearance, give the area a transformation to attract more visitors and residents, as well as supporting community well-being. 
-
-The project will contribute to a larger effort to improve Rockaway’s public spaces, making it a more attractive destination for beach-goers and creating a healthier, greener environment for residents throughout the year.
+This recommendation outlines a targeted tree replacement strategy focused on districts with elevated dead-tree rates. The objective is to prioritize resource allocation using data-driven insights to improve urban sustainability.
 
 **District Selection**
 
-A comparative analysis across districts shows that District 32 has a significant high dead-tree share (14% of it's total tree population). Focusing on giving resources to replacing trees can make a great impact on the affected neighborhoods. 
+A comparative analysis across districts shows that District 32 has one of the highest dead-tree shares (~14% of its total tree population). This indicates a clear need for targeted maintenance and tree replacement efforts.
 
 
 **Scope and Goals**
 
-- Replace 100 dead trees to reduce hazards and make space for healthy trees
-- Plant 200 new trees, with a mix of tree species to increase green space density and biodiversity
-- Planting new trees will additionally support keeping streets cooler during summer heat waves, filter air pollutants to  public health, manage stormwater to reduce flood risk, and boosting property values.
-
-Reducing air pollution and supporting public health
-
-Managing stormwater and lowering flood risk
-
-Improving neighborhood aesthetics and boosting property values
+- Replace ~100 dead trees to reduce safety risks and improve tree health  
+- Plant ~200 new trees to increase green space density and biodiversity  
+- Improve environmental outcomes including air quality, urban heat reduction, and stormwater management  
 
 **Supporting Visuals**
 
-As seen below in the comparison chart, District 32 has as of today, the highest dead-tree fractions in the city, making it a priority for target action. 
+The chart below shows that District 32 has the highest dead-tree share across NYC districts, supporting its prioritization for targeted intervention.
 
 ```{r}
 
@@ -627,7 +561,9 @@ ggplot(dead_fraction_clean, aes(x = reorder(CounDist, Dead_Fraction), y = Dead_F
   )
 ```
 
-As seen below is a detailed table of NYC District's with the 5 highest dead trees share. With District 32 having **4309** dead trees out of **30290** trees, making it **14%** of it's total tree population. 
+The table below highlights the five districts with the highest dead-tree share. District 32 has **4,309** dead trees out of **30,290** total trees **(~14%)**, making it a clear priority for targeted replacement.
+
+
 ```{r}
 
 # Summarize dead trees per district
@@ -676,8 +612,8 @@ top_districts %>%
 
 ```
 
-
-This is a zoomed-in map of District 32 highlighting the dead trees, we will start our proposed work to target for replacement. 
+ 
+The map below highlights the spatial distribution of dead trees within District 32, providing a localized view of areas requiring targeted replacement.
 
 ```{r}
 
@@ -708,6 +644,6 @@ ggplot() +
   )
 ```
 
-**Conclusion**
+## Final Takeaway
 
-This initiative is part of a broader effort to improve Rockaway’s public spaces, making it safer, greener, and more attractive year-round. By addressing the urgent need for tree replacement in District 32, the project supports both environmental resilience and community well-being.
+This analysis demonstrates how district-level data can be used to identify maintenance gaps and prioritize resource allocation. By focusing on areas with elevated dead-tree rates, targeted interventions can improve environmental quality and long-term urban sustainability outcomes.
