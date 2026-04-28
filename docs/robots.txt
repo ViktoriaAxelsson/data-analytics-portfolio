@@ -1,1 +1,1 @@
-Sitemap: https://viktoriaaxelsson.github.io/STA9750-2025-FALL/sitemap.xml
+Sitemap: https://viktoriaaxelsson.github.io/data-analytics-portfolio/sitemap.xml
