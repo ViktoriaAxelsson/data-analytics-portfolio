@@ -8,7 +8,7 @@ format:
     code-fold: true
     code-summary: "Code"
 execute:
-  cache: true
+  cache: false
 ---
 
 ![](Centralpark.png)
